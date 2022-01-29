@@ -1,5 +1,7 @@
 import time
 import sys
+import itertools, sys
+from time import sleep
 
 def moving_ellipsis(content):
     print(content, end="")
@@ -22,6 +24,22 @@ def print_text(text: str, sleep_time: float = 0.0) -> None:
     if sleep_time != 0.0:
         time.sleep(sleep_time)
 
+def spinner(time):
+    spinner = itertools.cycle(['-', '/', '|', '\\'])
+    c = 0
+    while c < time:
+        sys.stdout.write(next(spinner))
+        sleep(0.3)   # write the next character
+        sys.stdout.flush()                # flush stdout buffer (actual character display)
+        sys.stdout.write('\b')
+        c += 1
+
+        if c == time:
+            sys.stdout.flush()   
+            sys.stdout.write('\b')
+            break
+
+
 
 def menu_art(selection):
 	if selection == 1:
@@ -41,12 +59,15 @@ def menu_art(selection):
 
 	elif selection == 2:
 		print(r"""
-    /|    //| |             v0.05                / /                                        
-   //|   // | |     ___    __  ___  ___         / /        ( )  ___      ___     ( )  ___    
-  // |  //  | |   //___) )  / /   //   ) )     / /        / / //   ) ) ((   ) ) / / ((   ) ) 
- //  | //   | |  //        / /   //   / /     / /        / / //___/ /   \ \    / /   \ \     
-//   |//    | | ((____    / /   ((___( (     / /____/ / / / //       //   ) ) / / //   ) )   
-""")
+                /|    //| |             v0.05                / /                                        
+               //|   // | |     ___    __  ___  ___         / /        ( )  ___      ___     ( )  ___    
+              // |  //  | |   //___) )  / /   //   ) )     / /        / / //   ) ) ((   ) ) / / ((   ) ) 
+             //  | //   | |  //        / /   //   / /     / /        / / //___/ /   \ \    / /   \ \     
+            //   |//    | | ((____    / /   ((___( (     / /____/ / / / //       //   ) ) / / //   ) )   
+        """)
+
+def screen_line():
+    print(' _____________________________________________________________________________________________________________________')
 
 
 		

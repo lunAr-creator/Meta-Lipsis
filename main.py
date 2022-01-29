@@ -1,87 +1,82 @@
 import secrets
-import bcrypt
+import string
+import random
+import hashlib
 
-#generates token for user class
+from visualUtils import moving_ellipsis, print_text, menu_art
+from misc import get_input
+
+def make_hash(data):
+	return hashlib.sha256(str.encode(data)).hexdigest()
+
+def check_hash(data, hash):
+	if make_hash(data) == hash:
+		return True
+
+	return False
+
+#generates token for securely connecting to server
 def generate_token(size=15):
     return secrets.token_urlsafe(size)[:size]
 
-#main user class --> requires, username, password and token to function as intended
-class User:
-	def __init__(self, userName, userPassword, userToken=generate_token()):
-		self.userName = userName
-		self.userPassword = userPassword
-		self.UserToken = userToken
+def get_existing_users():
+    with open("accountfile.txt", "r") as fp:
+         for line in fp.readlines():
+             username, password = line.split()
+             yield username, password
 
-	def query(self, item):
-		possible_queries: dict = {
-			"userName": self.userName,
-            "userPassword": self.userPassword,
-            "userToken": self.UserToken,
-        }
+def is_authorized(username, password):
+    # return any((user == (username, password) for user in get_existing_users()))
+    return any((check_hash(username, user[0])) and check_hash(password, user[1]) for user in get_existing_users())
 
-		return possible_queries[item]
+def get_user():
+	username = input("Username: ")
+	password = input("Password: ")
 
-#create new user process
-def create_new_user(new_username, new_password):
-	rand_token = generate_token()
-	print(rand_token)
-	new_user = User(new_username, new_password, rand_token)
+	return username, password
 
-#main login function --> migrate to database in future (online or app generated) 
-def login(username, password):
+def make_user():
+	new_username = input("New Username: ")
+	new_password = input("New Password: ")
+	print(f"Hashed Username: {make_hash(new_username)}")
+	print(f"Hashed Password: {make_hash(new_password)}")
 
-	for line in open("accountfile.txt","r").readlines(): # Read the lines
-		login_info = line.split() # Split on the space, and store the results in a list of two strings
-		for items in login_info:
-			if username == login_info[login_info.index(items)] and password == login_info[login_info.index(items)+1]:
-				user_check = User(login_info[login_info.index(items)], login_info[login_info.index(items)+1])
-				break
-			else:
-				continue
+	#hash usernames and passwords before writing to .txt file
+	file = open("accountfile.txt","a")
+	file.write(make_hash(new_username))
+	file.write(" ")
+	file.write(make_hash(new_password))
+	file.write("\n")
+	file.close()
 
-		print(login_info)
-    
-	if username == user_check.query('userName') and password == user_check.query('userPassword'):
-		print("Logged in")
-
+	if is_authorized(new_username, new_password):
+		try:
+			moving_ellipsis("Redirecting to login process")
+			authorisation()
+		except Exception as e:
+			print(f"Fail encountered during sub-process {make_user.__name__}. Error: {e}")
 	else:
-		if username != user_check.query('userName') and password == user_check.query('userPassword'):
-			print(f"Incorrect login details: Supplied username: {username}, is incorrect")
+		print("Something went wrong. Try again later :D")
 
-		elif username == user_check.query('userName') and password != user_check.query('userPassword'):
-			print(f"Incorrect login details: Supplied password: {password}, is incorrect")
+	return False
 
-		else:
-			print(f"Incorrect login details: Supplied username and password: {username}, {password} are incorrect")
+def authorisation():
+	username, password = get_user()
 
+	if is_authorized(username, password):
+		print(f"Welcome back {username}")
+	elif not is_authorized(username, password):
+		print("Incorrect login details")
 
+def main():
+	menu_art(2)
+	choice = get_input('\nmeta lipsis ~v0.05 \n→ ', ["Login", "New User"])
 
-#main starting function connecting all relevant functions and classes --> occurs before main func *2
-def mainBefore():
-	prompt = int(input("Login[1] or create new user?[2] --> "))
+	if choice == "Login":
+		authorisation()
 
-	if prompt == 1:
-		username_prompt = input("Username: ")
-		password_prompt = input("Password: ")
-		login(username_prompt, password_prompt)
+	elif choice == "New User":
+		make_user()
 
-	elif prompt == 2:
-		new_username_prompt = input("New Username: ")
-		new_password_prompt = input("New Password: ")
-
-		file = open("accountfile.txt","a")
-		file.write(new_username_prompt)
-		file.write(" ")
-		file.write(new_password_prompt)
-		file.write("\n")
-		file.close()
-
-		create_new_user(new_username_prompt, new_password_prompt)
-
-		username_prompt = input("\nUsername: ")
-		password_prompt = input("Password: ")
-		login(username_prompt, password_prompt)
-
-mainBefore()
-
-
+if __name__ == '__main__':
+	main()

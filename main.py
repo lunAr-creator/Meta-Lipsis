@@ -38,44 +38,58 @@ def get_user():
 	return username, password
 
 def make_user():
-	new_username = input("\n New Username: ")
-	while True:
-		new_password = input(" New Password: ")
-		confirm = stdiomask.getpass(prompt=" Confirm Password: ")
+	if len(list(get_existing_users())) == 3:
+		print(" The number of available accounts [2] has been reached.\n If you wish to create more, simply modify the account file.")
 
-		if confirm == new_password:
-			moving_ellipsis("\n > Your Passwords Match. Continuing process")
-			break
+		moving_ellipsis("\n Redirecting to login process")
+		authorisation()
 
-		else:
-			print("\n > Passwords do not match. Try again")
-
-	#hash usernames and passwords before writing to .txt file
-	file = open("accountfile.txt","a")
-	file.write(make_hash(new_username))
-	file.write(" ")
-	file.write(make_hash(new_password))
-	file.write("\n")
-	file.close()
-
-	if is_authorized(new_username, new_password):
-		try:
-			moving_ellipsis("\n Redirecting to login process")
-			authorisation()
-		except Exception as e:
-			print(f" Fail encountered during sub-process {make_user.__name__}. Error: {e}")
 	else:
-		print(" Something went wrong. Try again later :D")
+		new_username = input("\n New Username: ")
+		while True:
+			new_password = input(" New Password: ")
+			confirm = stdiomask.getpass(prompt=" Confirm Password: ")
 
-	return False
+			if confirm == new_password:
+				moving_ellipsis("\n > Your Passwords Match. Continuing process")
+				break
+
+			else:
+				print("\n > Passwords do not match. Try again")
+
+		#hash usernames and passwords before writing to .txt file
+		file = open("accountfile.txt","a")
+		file.write(make_hash(new_username))
+		file.write(" ")
+		file.write(make_hash(new_password))
+		file.write("\n")
+		file.close()
+
+		if is_authorized(new_username, new_password):
+			try:
+				moving_ellipsis("\n Redirecting to login process")
+				authorisation()
+			except Exception as e:
+				print(f" Fail encountered during sub-process {make_user.__name__}. Error: {e}")
+		else:
+			print(" Something went wrong. Try again later :D")
+
+		return False
 
 def authorisation():
 	username, password = get_user()
 
 	if is_authorized(username, password):
 		print(f"\n Welcome back {username}")
+
 	elif not is_authorized(username, password):
-		print("\n Incorrect login details")
+		while not is_authorized(username, password):
+			if is_authorized(username, password):
+				print(f"\n Welcome back {username}")
+				break
+
+			print("\n Incorrect login details")
+			username, password = get_user()
 
 def main():
 	menu_art(2)

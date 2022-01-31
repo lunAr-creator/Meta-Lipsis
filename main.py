@@ -1,23 +1,12 @@
-import getpass
-import hashlib
-import random
 import secrets
 import string
+import random
+import hashlib
+import getpass
 import stdiomask
-import socket
-import os
-import sys
 
-from visualUtils import moving_ellipsis, print_text, menu_art, spinner, screen_line, line_by_line
+from visualUtils import moving_ellipsis, print_text, menu_art, spinner, screen_line
 from misc import get_input, get_help
-
-with open(os.devnull, 'w') as f:
-    oldstdout = sys.stdout
-    sys.stdout = f
-
-    from pygame import mixer
-
-    sys.stdout = oldstdout
 
 def make_hash(data):
 	return hashlib.sha256(str.encode(data)).hexdigest()
@@ -28,6 +17,7 @@ def check_hash(data, hash):
 
 	return False
 
+#generates token for securely connecting to server
 def generate_token(size=15):
     return secrets.token_urlsafe(size)[:size]
 
@@ -102,14 +92,13 @@ def authorisation():
 			username, password = get_user()
 
 def main():
-	# menu_art(2)
-	line_by_line()
+	menu_art(2)
 	screen_line()
-	help_line = '		<Type Login or New User>'
+	help_line = '		Type Login or New User'
 	print(help_line.rjust(int(118/2)), " ")
 
 	while True:
-		choice = get_input(f'\n Main Menu ~{socket.gethostname()} \n → ', ["Login", "New User", "Help"])
+		choice = get_input('\n meta lipsis ~v0.05 \n → ', ["Login", "New User", "Help"])
 
 		if choice == "Login":
 			authorisation()

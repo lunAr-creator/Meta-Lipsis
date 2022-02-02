@@ -9,7 +9,7 @@ A secure chatroom implementation in python which includes the ability of account
 
 ## Installation
 
-Download/clone the repository or download the `.exe` file which can be ran straight away. Additional files currently present in the repo will be created by the `.exe` during sub-process's (user login and registration for example)
+Clone the repository or download the `.exe` file which can be ran straight away. Additional files currently present in the repo will be created by the `.exe` during sub-process's (user login and registration for example)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

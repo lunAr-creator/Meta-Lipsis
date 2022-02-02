@@ -129,6 +129,7 @@ def authorisation():
 		username, password = get_user()
 
 		if is_authorized(username, password):
+			spinner(5.5)
 			print(f"\n Welcome back {username}")
 
 		else:

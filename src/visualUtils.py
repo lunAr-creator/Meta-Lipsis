@@ -25,7 +25,7 @@ def print_text(text: str, sleep_time: float = 0.0) -> None:
         time.sleep(sleep_time)
 
 def spinner(time):
-    spinner = itertools.cycle(['-', '/', '|', '\\'])
+    spinner = itertools.cycle([' -', '/', '|', '\\', ' '])
     c = 0
     while c < time:
         sys.stdout.write(next(spinner))
@@ -35,8 +35,6 @@ def spinner(time):
         c += 1
 
         if c == time:
-            sys.stdout.flush()   
-            sys.stdout.write('\b')
             break
 
 

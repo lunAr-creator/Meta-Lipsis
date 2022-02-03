@@ -8,7 +8,7 @@ import socket
 import os
 import sys
 
-from visualUtils import moving_ellipsis, print_text, menu_art, spinner, screen_line, line_by_line
+from visualUtils import moving_ellipsis, print_text, menu_art, spinner, screen_line
 
 with open(os.devnull, 'w') as f:
     oldstdout = sys.stdout
@@ -50,6 +50,9 @@ def get_input(string: str, valid_options: list) -> str:
 
 def generate_token(size=15):
     return secrets.token_urlsafe(size)[:size]
+
+def is_command(command_given):
+	return command_given.startswith('/', 0, 1)
 
 
 #Make hashes for comparisons and storing in .txt file 'accountfile.txt'
@@ -129,7 +132,7 @@ def authorisation():
 		username, password = get_user()
 
 		if is_authorized(username, password):
-			spinner(5.5)
+			spinner(5)
 			print(f"\n Welcome back {username}")
 
 		else:
@@ -138,14 +141,12 @@ def authorisation():
 
 #Main menu loop!!!
 def main():
-	# menu_art(2)
-	line_by_line()
+	menu_art(1)
+	# line_by_line()
 	screen_line()
-	help_line = '		<Type Login or New User>'
-	print(help_line.rjust(int(118/2)), " ")
 
 	while True:
-		choice = get_input(f'\n Main Menu ~{socket.gethostname()} \n → ', ["Login", "New User", "Help"])
+		choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', ["Login", "New User", "Help"])
 
 		if choice == "Login":
 			authorisation()

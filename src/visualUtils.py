@@ -1,7 +1,10 @@
 import time
 import sys
-import itertools, sys
+import itertools
+
 from time import sleep
+from urllib.request import urlopen
+from bs4 import BeautifulSoup as BS
 
 def moving_ellipsis(content):
     print(content, end="")
@@ -42,28 +45,17 @@ def spinner(time):
 def menu_art(selection):
     if selection == 1:
         print(r"""
-                /|    //| |             v0.05                / /                                        
-               //|   // | |     ___    __  ___  ___         / /        ( )  ___      ___     ( )  ___    
-              // |  //  | |   //___) )  / /   //   ) )     / /        / / //   ) ) ((   ) ) / / ((   ) ) 
-             //  | //   | |  //        / /   //   / /     / /        / / //___/ /   \ \    / /   \ \     
-            //   |//    | | ((____    / /   ((___( (     / /____/ / / / //       //   ) ) / / //   ) )   
+                    _______ _______ _______ _______             _____  _____  _______ _____ _______
+                    |  |  | |______    |    |_____|      |        |   |_____] |______   |   |______
+                    |  |  | |______    |    |     |      |_____ __|__ |       ______| __|__ ______|
         """)
-               
-def line_by_line():
-    time.sleep(0.05)
-    print(r"""                   /|    //| |             v0.05                / /                                        """)
-    time.sleep(0.05)
-    print(r"""                  //|   // | |     ___    __  ___  ___         / /        ( )  ___      ___     ( )  ___    """)
-    time.sleep(0.05)
-    print(r"""                 // |  //  | |   //___) )  / /   //   ) )     / /        / / //   ) )  ((   ) ) / / ((   ) ) """)
-    time.sleep(0.05)
-    print(r"""                //  | //   | |  //        / /   //   / /     / /        / / //___/ /    \ \    / /   \ \     """)
-    time.sleep(0.05)
-    print(r"""               //   |//    | | ((____    / /   ((___( (     / /____/ / / / //       //   ) ) / / //   ) )   """)
-
 
 def screen_line():
-    print(' _____________________________________________________________________________________________________________________')
-
-
-		
+    #get version number from meta lipsis github repository
+    url ="https://github.com/lunAr-creator/Meta-Lipsis/blob/master/version.txt"
+    usock = urlopen(url)
+    data = usock.read()
+    usock.close()
+    soup = BS(data,features="lxml")
+    data = soup.find('td', {'class':'blob-code blob-code-inner js-file-line'}).text
+    print(f' ____<{data}>_______________________________________________________________________________________________')

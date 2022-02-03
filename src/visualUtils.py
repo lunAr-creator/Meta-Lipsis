@@ -1,6 +1,7 @@
 import time
 import sys
 import itertools
+import random
 
 from time import sleep
 from urllib.request import urlopen
@@ -58,4 +59,4 @@ def screen_line():
     usock.close()
     soup = BS(data,features="lxml")
     data = soup.find('td', {'class':'blob-code blob-code-inner js-file-line'}).text
-    print(f' ____<{data}>_______________________________________________________________________________________________')
+    print(f' ____<{data}>_________________________________________________________________<Made w/♥ by Soma Benfell>____')

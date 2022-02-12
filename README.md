@@ -2,7 +2,7 @@
   <img src="logo.png" height="300" width="300">
 </p>
 
-# Overview
+# Meta Lipsis
 A secure chatroom implementation in python which includes the ability of account creation (and therefore logging in), aswell as the means to host your own chatroom server, or join one.
 
 > This program is currently under developement. It will not feature any complete chatroom functionality as of yet

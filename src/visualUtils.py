@@ -41,7 +41,14 @@ def spinner(time):
         if c == time:
             break
 
+def loading_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='>'):
+    percent = ('{0:.' + str(decimals) + 'f}').format(100 * (iteration/float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} [{bar}] {percent}% {suffix}', end='\r')
 
+    if iteration == total:
+        print()
 
 def menu_art(selection):
     if selection == 1:

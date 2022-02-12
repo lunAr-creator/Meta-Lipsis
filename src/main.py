@@ -9,7 +9,8 @@ import os, os.path
 import sys
 import time
 
-from visualUtils import moving_ellipsis, print_text, menu_art, spinner, screen_line
+from time import sleep
+from visualUtils import moving_ellipsis, print_text, menu_art, spinner, screen_line, loading_bar
 
 #Miscellaneous Functions
 def reminder_exit():
@@ -66,19 +67,26 @@ def check_hash(data, hash):
 
 #Functions that deal with creation, authorisation and login process of the user
 def get_existing_users():
-	if does_exit("accountfile.txt"):
-	    with open("accountfile.txt", "r") as fp:
-	         for line in fp.readlines():
-	             username, password = line.split()
-	             yield username, password
+    if does_exit('accountfile.txt'):
+        with open('accountfile.txt', 'r') as fp:
+            for line in fp.readlines():
+                (username, password) = line.split()
+                yield (username, password)
+    else:
 
-	else:
-		f = open("accountfile.txt","a")
-		f.close()
-		get_existing_users()
+        f = open('accountfile.txt', 'a')
+        f.close()
+        get_existing_users()
 
 def is_authorized(username, password):
-    return any((check_hash(username, user[0])) and check_hash(password, user[1]) for user in get_existing_users())
+    l = sum(map(len, get_existing_users()))
+    loading_bar(0, l, prefix=' Checking validity:', suffix='Complete', length=l)
+
+    for i in range(0, l):
+        sleep(0.3)
+        loading_bar(i + 1, l, prefix=' Checking validity:', suffix='Complete', length=l)
+
+    return any(check_hash(username, user[0]) and check_hash(password, user[1]) for user in get_existing_users())
 
 def get_user():
 	username = input("\n Username: ")
@@ -136,7 +144,7 @@ def authorisation():
 		username, password = get_user()
 
 		if is_authorized(username, password):
-			spinner(5)
+			# spinner(5)
 			print(f"\n Welcome back {username}")
 			reminder_exit()
 
@@ -148,7 +156,6 @@ def authorisation():
 #Main menu loop!!!
 def main():
 	menu_art(1)
-	# line_by_line()
 	screen_line()
 	print(" Type 'Help' to get started")
 

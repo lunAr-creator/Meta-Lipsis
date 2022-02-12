@@ -49,8 +49,11 @@ def generate_token(size=15):
 def is_command(command_given):
 	return command_given.startswith('/', 0, 1)
 
+def does_exit(file_name):
+	return os.path.isfile(file_name)
 
-#Make hashes for comparisons and storing in .txt file 'accountfile.txt'
+
+#Make hashes for comparisons and storing in .txt file 'accountfile.txt
 def make_hash(data):
 	return hashlib.sha256(str.encode(data)).hexdigest()
 
@@ -63,7 +66,7 @@ def check_hash(data, hash):
 
 #Functions that deal with creation, authorisation and login process of the user
 def get_existing_users():
-	if os.path.isfile("accountfile.txt"):
+	if does_exit("accountfile.txt"):
 	    with open("accountfile.txt", "r") as fp:
 	         for line in fp.readlines():
 	             username, password = line.split()

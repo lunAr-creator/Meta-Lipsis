@@ -59,4 +59,4 @@ def screen_line():
     usock.close()
     soup = BS(data,features="lxml")
     data = soup.find('td', {'class':'blob-code blob-code-inner js-file-line'}).text
-    print(f' ____<{data}>_________________________________________________________________<Made w/♥ by Soma Benfell>____')
+    print(f' ____<{data}>_______________________________________________________________________________________________')

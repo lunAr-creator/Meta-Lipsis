@@ -10,7 +10,8 @@ import sys
 import time
 
 from time import sleep
-from visualUtils import moving_ellipsis, print_text, menu_art, spinner, screen_line, loading_bar
+from visualUtils import moving_ellipsis, print_text, menu_art, spinner, \
+    screen_line, loading_bar
 
 #Miscellaneous Functions
 def reminder_exit():
@@ -92,14 +93,24 @@ def get_existing_users():
         get_existing_users()
 
 def is_authorized(username, password):
-    l = sum(map(len, get_existing_users()))
-    loading_bar(0, l, prefix=' Checking validity:', suffix='Complete', length=l)
+    l1 = len(list(get_existing_users()))
+    l2 = sum(map(len, get_existing_users()))
+    print()
 
-    for i in range(0, l):
+    loading_bar(0, l1, prefix=' Checking Usernames:', suffix='Complete', length=l1)
+
+    for i in range(0, l1):
         sleep(0.3)
-        loading_bar(i + 1, l, prefix=' Checking validity:', suffix='Complete', length=l)
+        loading_bar(i + 1, l1, prefix=' Checking Usernames:', suffix='Complete', length=l1)
 
-    return any(check_hash(username, user[0]) and check_hash(password, user[1]) for user in get_existing_users())
+    loading_bar(0, l2, prefix=' Checking Validity:', suffix='Complete', length=l2)
+
+    for i in range(0, l2):
+        sleep(0.3)
+        loading_bar(i + 1, l2, prefix=' Checking Validity:', suffix='Complete', length=l2)
+
+    return any(check_hash(username, user[0]) and check_hash(password,
+           user[1]) for user in get_existing_users())
 
 def get_user():
 	username = input("\n Username: ")
@@ -173,8 +184,8 @@ def main():
 	print(" Type 'Help' to get started")
 
 	while True:
-		# choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', ["Login", "New User", "Help"])
-		choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', [["Login", "Login??"], ['New User', 'Create new user']])
+		choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', 
+			[["Login", "Login??"], ['New User', 'Create new user']])
 
 
 		if choice == "Login":
@@ -184,9 +195,6 @@ def main():
 		elif choice == "New User":
 			make_user()
 			break
-
-		# elif choice == "Help":
-		# 	get_help([["Login", "Login??"], ['New User', 'Create new user']])
 
 		elif choice == False:
 			break

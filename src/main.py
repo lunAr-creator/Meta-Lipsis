@@ -33,16 +33,29 @@ def get_help(given_list):
 def get_input(string: str, valid_options: list) -> str:
     while True:
         user_input = input(string)
-        capitalized = user_input[0].upper() + user_input[1:len(user_input)]
+        if user_input == '':
+        	continue
+        else:
+	        capitalized = user_input[0].upper() + user_input[1:len(user_input)]
 
-        if user_input in valid_options or capitalized in valid_options:
+        options = []
+        for i in range(len(valid_options)):
+
+            for j in range(len(valid_options[i])):
+                option = f'{valid_options[i][j-1]}'
+            options.append(option)
+
+        if user_input in options or capitalized in options:
             return capitalized
 
         elif capitalized == 'Exit':
-        	print("\n Ending Program")
-        	return False
+            reminder_exit()
+            return False
 
-        print(f" -Please select from: {' or '.join(valid_options)}-")
+        elif capitalized == 'Help':
+        	return get_help(valid_options)
+
+        print(f" -Please select from: {' or '.join(options)} and Help-")
 
 def generate_token(size=15):
     return secrets.token_urlsafe(size)[:size]
@@ -160,7 +173,9 @@ def main():
 	print(" Type 'Help' to get started")
 
 	while True:
-		choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', ["Login", "New User", "Help"])
+		# choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', ["Login", "New User", "Help"])
+		choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', [["Login", "Login??"], ['New User', 'Create new user']])
+
 
 		if choice == "Login":
 			authorisation()
@@ -170,8 +185,8 @@ def main():
 			make_user()
 			break
 
-		elif choice == "Help":
-			get_help([["Login", "Login??"], ['New User', 'Create new user']])
+		# elif choice == "Help":
+		# 	get_help([["Login", "Login??"], ['New User', 'Create new user']])
 
 		elif choice == False:
 			break

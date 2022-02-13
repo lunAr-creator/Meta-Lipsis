@@ -93,21 +93,15 @@ def get_existing_users():
         get_existing_users()
 
 def is_authorized(username, password):
-    l1 = len(list(get_existing_users()))
-    l2 = sum(map(len, get_existing_users()))
+    l = sum(map(len, get_existing_users()))
     print()
 
-    loading_bar(0, l1, prefix=' Checking Usernames:', suffix='Complete', length=l1)
+    loading_bar(0, l, prefix=' Checking Validity:', suffix='Complete', length=l)
 
-    for i in range(0, l1):
-        sleep(0.3)
-        loading_bar(i + 1, l1, prefix=' Checking Usernames:', suffix='Complete', length=l1)
-
-    loading_bar(0, l2, prefix=' Checking Validity:', suffix='Complete', length=l2)
-
-    for i in range(0, l2):
-        sleep(0.3)
-        loading_bar(i + 1, l2, prefix=' Checking Validity:', suffix='Complete', length=l2)
+    time.sleep(1)
+    for i in range(0, l):
+        sleep((random.randint(3, 5))/10)
+        loading_bar(i + 1, l, prefix=' Checking Validity:', suffix='Complete', length=l)
 
     return any(check_hash(username, user[0]) and check_hash(password,
            user[1]) for user in get_existing_users())
@@ -168,11 +162,12 @@ def authorisation():
 		username, password = get_user()
 
 		if is_authorized(username, password):
-			# spinner(5)
+			time.sleep(1)
 			print(f"\n Welcome back {username}")
 			reminder_exit()
 
 		else:
+			time.sleep(1)
 			print("\n Incorrect login details")
 			reminder_exit()
 
@@ -185,7 +180,7 @@ def main():
 
 	while True:
 		choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', 
-			[["Login", "Login??"], ['New User', 'Create new user']])
+			[["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" ']])
 
 
 		if choice == "Login":

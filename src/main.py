@@ -96,12 +96,12 @@ def is_authorized(username, password):
     l = sum(map(len, get_existing_users()))
     print()
 
-    loading_bar(0, l, prefix=' Checking Validity:', suffix='Complete', length=l)
+    loading_bar(0, l, prefix=' Checking Accounts:', suffix='Complete', length=l)
 
     time.sleep(1)
     for i in range(0, l):
         sleep((random.randint(3, 5))/10)
-        loading_bar(i + 1, l, prefix=' Checking Validity:', suffix='Complete', length=l)
+        loading_bar(i + 1, l, prefix=' Checking Accounts:', suffix='Complete', length=l)
 
     return any(check_hash(username, user[0]) and check_hash(password,
            user[1]) for user in get_existing_users())
@@ -113,7 +113,7 @@ def get_user():
 	return username, password
 
 def make_user():
-	if len(list(get_existing_users())) == 3:
+	if len(list(get_existing_users())) == 4:
 		print(" The number of available accounts [3] has been reached.\n If you wish to create more, simply modify the account file.")
 
 		moving_ellipsis("\n Redirecting to login process")
@@ -133,12 +133,11 @@ def make_user():
 				print("\n > Passwords do not match. Try again")
 
 		#hash usernames and passwords before writing to .txt file
-		file = open("accountfile.txt","a")
-		file.write(make_hash(new_username))
-		file.write(" ")
-		file.write(make_hash(new_password))
-		file.write("\n")
-		file.close()
+		with open("accountfile.txt","a") as file:
+			file.write(make_hash(new_username))
+			file.write(" ")
+			file.write(make_hash(new_password))
+			file.write("\n")
 
 		if is_authorized(new_username, new_password):
 			try:

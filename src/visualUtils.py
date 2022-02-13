@@ -7,6 +7,9 @@ from time import sleep
 from urllib.request import urlopen
 from bs4 import BeautifulSoup as BS
 
+from rich.console import Console
+console = Console()
+
 def moving_ellipsis(content):
     print(content, end="")
 
@@ -45,7 +48,7 @@ def loading_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, 
     percent = ('{0:.' + str(decimals) + 'f}').format(100 * (iteration/float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
-    print(f'\r{prefix} [{bar}] {percent}% {suffix}', end='\r')
+    console.print(f'\r{prefix} [{bar}] [green]{percent}[/green]% {suffix}', end='\r')
 
     if iteration == total:
         print()

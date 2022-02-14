@@ -1,20 +1,21 @@
 import getpass
 import hashlib
+import json
+import os, os.path
 import random
+import requests
 import secrets
 import string
 import stdiomask
 import socket
-import os, os.path
 import sys
 import time
+import win32file
+import win32com.client
 
 from time import sleep
 
 from visualUtils import *
-from server import Server
-from client import Client
-
 
 #Miscellaneous Functions
 def reminder_exit():
@@ -67,9 +68,44 @@ def generate_token(size=15):
 def is_command(command_given):
 	return command_given.startswith('/', 0, 1)
 
-def does_exit(file_name):
+def does_exist(file_name):
 	return os.path.isfile(file_name)
 
+def get_ip(endpoint='https://ipinfo.io/json'):
+    response = requests.get(endpoint, verify=True)
+
+    if response.status_code != 200:
+        return f'Status:, {response.status_code}, Problem with the request. Exiting.'
+        exit()
+
+    publicIp = response.json()
+    privateIp = socket.gethostbyname(socket.gethostname())
+    return publicIp['ip'], privateIp
+
+def locate_usb(target, _id):
+    target = target + ':\\'
+    drive_list = []
+    drivebits = win32file.GetLogicalDrives()
+
+    for d in range(1, 26):
+        mask = 1 << d
+
+        if drivebits & mask:
+            drname = '%c:\\' % chr(ord('A') + d)
+            t = win32file.GetDriveType(drname)
+            
+            if t == win32file.DRIVE_REMOVABLE:
+                drive_list.append(drname)
+
+    id_list = []
+    wmi = win32com.client.GetObject ("winmgmts:")
+    for usb in wmi.InstancesOf ("Win32_USBHub"):
+        id_list.append(usb.DeviceID)
+
+    if (target in drive_list) and (_id in id_list):
+        return True
+
+    return False 
 
 #Make hashes for comparisons and storing in .txt file 'accountfile.txt
 def make_hash(data):
@@ -84,7 +120,7 @@ def check_hash(data, hash):
 
 #Functions that deal with creation, authorisation and login process of the user
 def get_existing_users():
-    if does_exit('accountfile.txt'):
+    if does_exist('accountfile.txt'):
         with open('accountfile.txt', 'r') as fp:
             for line in fp.readlines():
                 (username, password) = line.split()
@@ -107,7 +143,7 @@ def is_authorized(username, password):
         loading_bar(i + 1, l, prefix=' Checking Accounts:', suffix='Complete', length=l)
 
     return any(check_hash(username, user[0]) and check_hash(password,
-           user[1]) for user in get_existing_users())
+           user[1]) for user in get_existing_users()) and locate_usb('E', 'USB\\VID_058F&PID_6387\\130D7963')
 
 def get_user():
 	username = input("\n Username: ")
@@ -166,19 +202,20 @@ def authorisation():
 		if is_authorized(username, password):
 			time.sleep(1)
 			print(f"\n Welcome back {username}")
-			reminder_exit()
+			# reminder_exit()
 
 		else:
 			time.sleep(1)
-			print("\n Incorrect login details")
-			reminder_exit()
+			print("\n Incorrect login details, or physical key not present")
+			# reminder_exit()
 
 
 #Main menu loop!!!
 def main():
 	menu_art(1)
 	screen_line()
-	print(" Type 'Help' to get started")
+	ips = get_ip()
+	print(f" Type 'Help' to get started					     PublicIP: {ips[0]}, PrivateIP: {ips[1]}")
 
 	while True:
 		choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', 

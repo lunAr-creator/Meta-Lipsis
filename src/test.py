@@ -1,0 +1,2 @@
+class Menu():
+	def initialise()

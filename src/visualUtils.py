@@ -57,6 +57,7 @@ def menu_art(selection):
                     |  |  | |______    |    |_____|      |        |   |_____] |______   |   |______
                     |  |  | |______    |    |     |      |_____ __|__ |       ______| __|__ ______|
         """)
+        print()
 
 def screen_line():
     #get version number from meta lipsis github repository

@@ -10,8 +10,11 @@ import sys
 import time
 
 from time import sleep
-from visualUtils import moving_ellipsis, print_text, menu_art, spinner, \
-    screen_line, loading_bar
+
+from visualUtils import *
+from server import Server
+from client import Client
+
 
 #Miscellaneous Functions
 def reminder_exit():

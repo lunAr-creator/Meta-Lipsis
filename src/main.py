@@ -22,18 +22,25 @@ def reminder_exit():
 	moving_ellipsis("\n Exiting program")
 
 def get_help(given_list):
-    print(" Help: \n -----------------------")
-    
-    for i in range(len(given_list)):
-        output2 = []
+	print("\n Help:")
+	lens = []
+	
+	for i in range(len(given_list)):
+		for j in range(len(given_list[i])):
+			lens.append(len(given_list[i][0]))
 
-        for j in range(len(given_list[i])):
-            output = f"{given_list[i][j]}"
-            output2.append(output)
+	for i in range(len(given_list)):
+		output2 = []
 
-        print(f" {': '.join(output2)}")
+		for j in range(len(given_list[i])):
+			output = f"{given_list[i][j]}"
+			output2.append(output)
 
-    print(" -----------------------")
+		calc = ((max(lens)+min(lens))-len(given_list[i][0]))
+		dots = '.'*calc
+		info = f'{dots}: '.join(output2)
+
+		print(f"   {info}") 
 
 def get_input(string: str, valid_options: list) -> str:
     while True:
@@ -82,31 +89,6 @@ def get_ip(endpoint='https://ipinfo.io/json'):
     privateIp = socket.gethostbyname(socket.gethostname())
     return publicIp['ip'], privateIp
 
-def locate_usb(target, _id):
-    target = target + ':\\'
-    drive_list = []
-    drivebits = win32file.GetLogicalDrives()
-
-    for d in range(1, 26):
-        mask = 1 << d
-
-        if drivebits & mask:
-            drname = '%c:\\' % chr(ord('A') + d)
-            t = win32file.GetDriveType(drname)
-            
-            if t == win32file.DRIVE_REMOVABLE:
-                drive_list.append(drname)
-
-    id_list = []
-    wmi = win32com.client.GetObject ("winmgmts:")
-    for usb in wmi.InstancesOf ("Win32_USBHub"):
-        id_list.append(usb.DeviceID)
-
-    if (target in drive_list) and (_id in id_list):
-        return True
-
-    return False 
-
 #Make hashes for comparisons and storing in .txt file 'accountfile.txt
 def make_hash(data):
 	return hashlib.sha256(str.encode(data)).hexdigest()
@@ -132,7 +114,7 @@ def get_existing_users():
         get_existing_users()
 
 def is_authorized(username, password):
-    l = sum(map(len, get_existing_users()))
+    l = int(sum(map(len, get_existing_users())) / 2)
     print()
 
     loading_bar(0, l, prefix=' Checking Accounts:', suffix='Complete', length=l)
@@ -143,7 +125,7 @@ def is_authorized(username, password):
         loading_bar(i + 1, l, prefix=' Checking Accounts:', suffix='Complete', length=l)
 
     return any(check_hash(username, user[0]) and check_hash(password,
-           user[1]) for user in get_existing_users()) and locate_usb('E', 'USB\\VID_058F&PID_6387\\130D7963')
+           user[1]) for user in get_existing_users())
 
 def get_user():
 	username = input("\n Username: ")
@@ -215,11 +197,11 @@ def main():
 	menu_art(1)
 	screen_line()
 	ips = get_ip()
-	print(f" Type 'Help' to get started					     PublicIP: {ips[0]}, PrivateIP: {ips[1]}")
+	print(f" Type 'Help' to get started")
 
 	while True:
-		choice = get_input(f'\n mainMenu@{socket.gethostname()}~{sys.platform}\n → ', 
-			[["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" ']])
+		choice = get_input(f'\n mainMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', 
+			[["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Ip", "Returns host computer public & private ip"]])
 
 
 		if choice == "Login":
@@ -229,6 +211,9 @@ def main():
 		elif choice == "New User":
 			make_user()
 			break
+
+		elif choice == "Ip":
+			print(f"\n PublicIP: {ips[0]}, PrivateIP: {ips[1]}")
 
 		elif choice == False:
 			break

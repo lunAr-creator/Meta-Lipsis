@@ -60,14 +60,10 @@ def get_input(string: str, valid_options: list) -> str:
         if user_input in options or capitalized in options:
             return capitalized
 
-        elif capitalized == 'Exit':
-            reminder_exit()
-            return False
-
         elif capitalized == 'Help':
         	return get_help(valid_options)
 
-        print(f" -Please select from: {' or '.join(options)} and Help-")
+        print(f" -Please select from: {', '.join(options)} or Help-")
 
 def generate_token(size=15):
     return secrets.token_urlsafe(size)[:size]
@@ -201,7 +197,7 @@ def main():
 
 	while True:
 		choice = get_input(f'\n mainMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', 
-			[["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Ip", "Returns host computer public & private ip"]])
+			[["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Ip", "Returns host computer public & private ip"], ["Exit", "Exit the program - will give 3s warning"]])
 
 
 		if choice == "Login":
@@ -215,7 +211,8 @@ def main():
 		elif choice == "Ip":
 			print(f"\n PublicIP: {ips[0]}, PrivateIP: {ips[1]}")
 
-		elif choice == False:
+		elif choice == "Exit":
+			reminder_exit()
 			break
 
 main()

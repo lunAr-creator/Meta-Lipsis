@@ -60,11 +60,4 @@ def menu_art(selection):
         print()
 
 def screen_line():
-    #get version number from meta lipsis github repository
-    url ="https://github.com/lunAr-creator/Meta-Lipsis/blob/master/version.txt"
-    usock = urlopen(url)
-    data = usock.read()
-    usock.close()
-    soup = BS(data,features="lxml")
-    data = soup.find('td', {'class':'blob-code blob-code-inner js-file-line'}).text
-    print(f' ____<{data}>_______________________________________________________________________________________________')
+    print(f' ____<2022v2.4.3-alpha>_______________________________________________________________________________________________')

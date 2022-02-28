@@ -61,3 +61,20 @@ def menu_art(selection):
 
 def screen_line():
     print(f' ____<2022v2.4.3-alpha>_______________________________________________________________________________________________')
+
+
+def documentation():
+    print(r"""
+
+ Meta Lipsis a secure chatroom implementation in python which includes 
+ the ability of account creation (and therefore logging in), aswell as 
+ the means to host your own chatroom server, or join one.
+
+ The GitHub Repository can be found at:
+    -> https://github.com/lunAr-creator/Meta-Lipsis
+
+ Created with love by Soma Benfell :D
+        """)
+
+def cls():
+    return os.system('cls' if os.name == 'nt' else 'clear'), menu_art(1), screen_line()

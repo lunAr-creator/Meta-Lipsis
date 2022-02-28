@@ -73,7 +73,7 @@ def does_exist(file_name):
 	return os.path.isfile(file_name)
 
 def get_ip():
-    return (socket.gethostbyname(socket.gethostname()), requests.get("https://www.wikipedia.org").headers["X-Client-IP"])
+    return (socket.gethostbyname(socket.gethostname()), requests.get('http://ip.42.pl/raw').text)
 
 #Make hashes for comparisons and storing in .txt file 'accountfile.txt
 def make_hash(data):
@@ -187,7 +187,7 @@ def main():
 
 	while True:
 		choice = get_input(f'\n mainMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', 
-			[["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Ip", "Returns host computers private ip"], ["Exit", "Exit the program - will give 3s warning"]])
+			[["Docu", "Returns the documentation for this program"], ["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Ip", "Returns host computers private ip"], ["Cls", "Clear the main menu"], ["Exit", "Exit the program - will give 3s warning"]])
 
 
 		if choice == "Login":
@@ -200,6 +200,12 @@ def main():
 
 		elif choice == "Ip":
 			print(f"\n Public_IP: {ips[1]}, Private_IP: {ips[0]}")
+
+		elif choice == "Docu":
+			documentation()
+
+		elif choice == "Cls":
+			cls()
 
 		elif choice == "Exit":
 			reminder_exit()

@@ -66,14 +66,8 @@ def get_input(string: str, valid_options: list) -> str:
 def generate_token(size=15):
     return secrets.token_urlsafe(size)[:size]
 
-def is_command(command_given):
-	return command_given.startswith('/', 0, 1)
-
 def does_exist(file_name):
 	return os.path.isfile(file_name)
-
-def get_ip():
-    return (socket.gethostbyname(socket.gethostname()), requests.get('http://ip.42.pl/raw').text)
 
 #Make hashes for comparisons and storing in .txt file 'accountfile.txt
 def make_hash(data):
@@ -84,7 +78,6 @@ def check_hash(data, hash):
 		return True
 
 	return False
-
 
 #Functions that deal with creation, authorisation and login process of the user
 def get_existing_users():
@@ -100,18 +93,8 @@ def get_existing_users():
         get_existing_users()
 
 def is_authorized(username, password):
-    l = int(sum(map(len, get_existing_users())) / 2)
-    print()
-
-    loading_bar(0, l, prefix=' Checking Accounts:', suffix='Complete', length=l)
-
-    time.sleep(1)
-    for i in range(0, l):
-        sleep((random.randint(3, 5))/10)
-        loading_bar(i + 1, l, prefix=' Checking Accounts:', suffix='Complete', length=l)
-
-    return any(check_hash(username, user[0]) and check_hash(password,
-           user[1]) for user in get_existing_users())
+    spinner()
+    return any(check_hash(username, user[0]) and check_hash(password, user[1]) for user in get_existing_users())
 
 def get_user():
 	username = input("\n Username: ")
@@ -120,25 +103,32 @@ def get_user():
 	return username, password
 
 def make_user():
-	if len(list(get_existing_users())) == 4:
-		print(" The number of available accounts [3] has been reached.\n If you wish to create more, simply modify the account file.")
+	max_users = 3
+	if len(list(get_existing_users())) <= max_users:
+		print(f" The number of available accounts [{max_users}] has been reached.\n If you wish to create more, simply modify the account file.")
 
 		moving_ellipsis("\n Redirecting to login process")
 		authorisation()
 
 	else:
 		new_username = input("\n New Username: ")
-		while True:
-			new_password = input(" New Password: ")
-			confirm = stdiomask.getpass(prompt=" Confirm Password: ")
 
-			if confirm == new_password:
-				moving_ellipsis("\n > Your Passwords Match. Continuing process")
+		while any(check_hash(new_username, user[0]) for user in get_existing_users()):
+			if not any(check_hash(new_username, user[0]) for user in get_existing_users()):
 				break
 
-			else:
-				print("\n > Passwords do not match. Try again")
+			print(" > Username already taken")
+			new_username = input("\n New Username: ")
 
+		new_password = input(" New Password: ")
+
+		while stdiomask.getpass(prompt=" Confirm Password: ") != new_password:
+			print("\n > Passwords do not match. Try again")
+			stdiomask.getpass(prompt=" Confirm Password: ")
+			
+		moving_ellipsis("\n > Your Passwords Match. Continuing process")
+
+			
 		#hash usernames and passwords before writing to .txt file
 		with open("accountfile.txt","a") as file:
 			file.write(make_hash(new_username))
@@ -169,48 +159,44 @@ def authorisation():
 
 		if is_authorized(username, password):
 			time.sleep(1)
-			print(f"\n Welcome back {username}")
-			# reminder_exit()
+			print(f"\n <Welcome back {username}>")
+			return True
 
 		else:
 			time.sleep(1)
-			print("\n Incorrect login details, or physical key not present")
-			# reminder_exit()
+			print("\n Incorrect login details")
+			return False
 
 
 #Main menu loop!!!
 def main():
 	menu_art(1)
 	screen_line()
-	ips = get_ip()
-	print(f" Type 'Help' to get started")
 
 	while True:
 		choice = get_input(f'\n mainMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', 
-			[["Docu", "Returns the documentation for this program"], ["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Ip", "Returns host computers private ip"], ["Cls", "Clear the main menu"], ["Exit", "Exit the program - will give 3s warning"]])
-
+			[["Docu", "Returns the documentation for this program"], ["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Exit", "Exit the program - will give 3s warning"]])
 
 		if choice == "Login":
-			authorisation()
-			break
+			if authorisation():
+				choice2 = get_input(f'\n subMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', [["Load", "Load your password vault connected to your account"], ["Audit", "Edit data in your password vault"], ["Erase", "Delete the entire password vault - requires password"]])
+				while choice2:
+					if choice2 == "Client":
+						start()
 
-		elif choice == "New User":
+					elif choice2 == "Server":
+						receive()
+
+			else:
+				reminder_exit()
+				break
+
+		if choice == "New User":
 			make_user()
 			break
-
-		elif choice == "Ip":
-			print(f"\n Public_IP: {ips[1]}, Private_IP: {ips[0]}")
-
-		elif choice == "Docu":
-			documentation()
-
-		elif choice == "Cls":
-			cls()
 
 		elif choice == "Exit":
 			reminder_exit()
 			break
 
 main()
-
-

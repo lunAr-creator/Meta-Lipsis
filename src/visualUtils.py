@@ -2,10 +2,10 @@ import time
 import sys
 import itertools
 import random
-
+import os
+import socket
+import requests
 from time import sleep
-from urllib.request import urlopen
-from bs4 import BeautifulSoup as BS
 
 def moving_ellipsis(content):
     print(content, end="")
@@ -28,22 +28,23 @@ def print_text(text: str, sleep_time: float = 0.0) -> None:
     if sleep_time != 0.0:
         time.sleep(sleep_time)
 
-def spinner(time):
-    spinner = itertools.cycle([' -', '/', '|', '\\', ' '])
+def spinner():
+    cycle = ['-', '/', '|', '\\', ' ']
+    spinner = itertools.cycle(cycle)
     c = 0
-    while c < time:
+    sys.stdout.write(" Checking accounts: ")
+    while c < len(cycle):
         sys.stdout.write(next(spinner))
         sleep(0.3)   # write the next character
         sys.stdout.flush()                # flush stdout buffer (actual character display)
         sys.stdout.write('\b')
         c += 1
-
-        if c == time:
-            break
+    sys.stdout.write("Finished")
+    print("\n")
 
 def loading_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='>'):
     percent = ('{0:.' + str(decimals) + 'f}').format(100 * (iteration/float(total)))
-    filledLength = int(length * iteration // total)
+    filledLength = int(length * iteration // total)                     
     bar = fill * filledLength + '-' * (length - filledLength)
     print(f'\r{prefix} [{bar}] {percent}% {suffix}', end='\r')
 
@@ -53,28 +54,18 @@ def loading_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, 
 def menu_art(selection):
     if selection == 1:
         print(r"""
-                    _______ _______ _______ _______             _____  _____  _______ _____ _______
-                    |  |  | |______    |    |_____|      |        |   |_____] |______   |   |______
-                    |  |  | |______    |    |     |      |_____ __|__ |       ______| __|__ ______|
+                                   _      _                    ______                              
+                         _      __(_)____(_)____   _________  / __/ /__      ______ _________      
+                        | | /| / / / ___/ / ___/  / ___/ __ \/ /_/ __/ | /| / / __ `/ ___/ _ \     
+                        | |/ |/ / / /  / (__  )  (__  ) /_/ / __/ /_ | |/ |/ / /_/ / /  /  __/     
+                        |__/|__/_/_/  /_/____/  /____/\____/_/  \__/ |__/|__/\__,_/_/   \___/ 
+
+                              An encrypted password vault software using SQL and sha256
         """)
         print()
 
 def screen_line():
-    print(f' ____<2022v2.4.3-alpha>_______________________________________________________________________________________________')
+    print(f' __________________________________________<Type "Help" to get started!>______________________________________________')                                                  
 
-
-def documentation():
-    print(r"""
-
- Meta Lipsis a secure chatroom implementation in python which includes 
- the ability of account creation (and therefore logging in), aswell as 
- the means to host your own chatroom server, or join one.
-
- The GitHub Repository can be found at:
-    -> https://github.com/lunAr-creator/Meta-Lipsis
-
- Created with love by Soma Benfell :D
-        """)
-
-def cls():
-    return os.system('cls' if os.name == 'nt' else 'clear'), menu_art(1), screen_line()
+def is_command(command_given):
+    return command_given.startswith('/', 0, 1)

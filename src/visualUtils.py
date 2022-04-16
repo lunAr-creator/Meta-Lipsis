@@ -28,18 +28,18 @@ def print_text(text: str, sleep_time: float = 0.0) -> None:
     if sleep_time != 0.0:
         time.sleep(sleep_time)
 
-def spinner():
+def spinner(start=" Checking accounts: ", end="Finished"):
     cycle = ['-', '/', '|', '\\', ' ']
     spinner = itertools.cycle(cycle)
     c = 0
-    sys.stdout.write(" Checking accounts: ")
+    sys.stdout.write(start)
     while c < len(cycle):
         sys.stdout.write(next(spinner))
         sleep(0.3)   # write the next character
         sys.stdout.flush()                # flush stdout buffer (actual character display)
         sys.stdout.write('\b')
         c += 1
-    sys.stdout.write("Finished")
+    sys.stdout.write(end)
     print("\n")
 
 def loading_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='>'):

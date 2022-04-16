@@ -96,11 +96,20 @@ def is_authorized(username, password):
     spinner()
     return any(check_hash(username, user[0]) and check_hash(password, user[1]) for user in get_existing_users())
 
-def get_user():
-	username = input("\n Username: ")
-	password = stdiomask.getpass(prompt=" Password: ")
+def check_user(username):
+    return any(check_hash(username, user[0]) for user in get_existing_users())
 
-	return username, password
+def get_user(data_needed):
+	if data_needed == "Username":
+		username = input("\n Username: ")
+
+		return username
+
+	else:
+		username = input("\n Username: ")
+		password = stdiomask.getpass(prompt=" Password: ")
+
+		return username, password
 
 def make_user():
 	max_users = 3
@@ -155,17 +164,17 @@ def authorisation():
 		make_user()
 
 	else:
-		username, password = get_user()
+		username, password = get_user("Both")
 
 		if is_authorized(username, password):
 			time.sleep(1)
 			print(f"\n <Welcome back {username}>")
-			return True
+			return True, username
 
 		else:
 			time.sleep(1)
 			print("\n Incorrect login details")
-			return False
+			return False, username
 
 
 #Main menu loop!!!
@@ -178,14 +187,39 @@ def main():
 			[["Docu", "Returns the documentation for this program"], ["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Exit", "Exit the program - will give 3s warning"]])
 
 		if choice == "Login":
-			if authorisation():
-				choice2 = get_input(f'\n subMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', [["Load", "Load your password vault connected to your account"], ["Audit", "Edit data in your password vault"], ["Erase", "Delete the entire password vault - requires password"]])
-				while choice2:
-					if choice2 == "Client":
-						start()
+			authorise = authorisation()
+			if authorise[0]:
+				while True:
+					choice2 = get_input(f'\n subMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', [["Load", "Load your password vault connected to your account"], ["Audit", "Edit data in your password vault"], ["Erase", "Delete the entire password vault - requires password"]])
 
-					elif choice2 == "Server":
-						receive()
+					if choice2 == "Load":
+						pass
+
+					elif choice2 == "Audit":
+						pass
+
+					elif choice2 == "Erase":
+						username = authorise[1]
+
+						if check_user(username) and does_exist(username+".txt"):
+							print(f" File associated with your username is: {username}.txt")
+							
+							while True:
+								choice3 = get_input(f'\n Do you wish to delete it?\n → ', [["y", "yes"], ["n", "no"]])
+								if choice3 == "Y":
+									spinner(" Deleting password vault: ", "Deleted")
+
+									try:
+										os.remove(username+".txt")
+										break
+
+									except Exception:
+										print(" The file is unable to be deleted")
+										break
+
+						else:
+							print(f"\n A vault tied to your username, {username}, does not exist.")
+							break
 
 			else:
 				reminder_exit()

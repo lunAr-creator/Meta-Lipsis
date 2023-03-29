@@ -12,7 +12,6 @@ import sys
 import time
 
 from time import sleep
-
 from visualUtils import *
 
 #Miscellaneous Functions
@@ -112,49 +111,41 @@ def get_user(data_needed):
 		return username, password
 
 def make_user():
-	max_users = 3
-	if len(list(get_existing_users())) <= max_users:
-		print(f" The number of available accounts [{max_users}] has been reached.\n If you wish to create more, simply modify the account file.")
+	new_username = input("\n New Username: ")
 
-		moving_ellipsis("\n Redirecting to login process")
-		authorisation()
+	while any(check_hash(new_username, user[0]) for user in get_existing_users()):
+		if not any(check_hash(new_username, user[0]) for user in get_existing_users()):
+			break
 
-	else:
+		print(" > Username already taken")
 		new_username = input("\n New Username: ")
 
-		while any(check_hash(new_username, user[0]) for user in get_existing_users()):
-			if not any(check_hash(new_username, user[0]) for user in get_existing_users()):
-				break
+	new_password = input(" New Password: ")
 
-			print(" > Username already taken")
-			new_username = input("\n New Username: ")
+	while stdiomask.getpass(prompt=" Confirm Password: ") != new_password:
+		print("\n > Passwords do not match. Try again")
+		stdiomask.getpass(prompt=" Confirm Password: ")
+		
+	moving_ellipsis("\n > Your Passwords Match. Continuing process")
 
-		new_password = input(" New Password: ")
+		
+	#hash usernames and passwords before writing to .txt file
+	with open("accountfile.txt","a") as file:
+		file.write(make_hash(new_username))
+		file.write(" ")
+		file.write(make_hash(new_password))
+		file.write("\n")
 
-		while stdiomask.getpass(prompt=" Confirm Password: ") != new_password:
-			print("\n > Passwords do not match. Try again")
-			stdiomask.getpass(prompt=" Confirm Password: ")
-			
-		moving_ellipsis("\n > Your Passwords Match. Continuing process")
+	if is_authorized(new_username, new_password):
+		try:
+			moving_ellipsis("\n Redirecting to login process")
+			authorisation()
+		except Exception as e:
+			print(f" Fail encountered during sub-process {make_user.__name__}. Error: {e}")
+	else:
+		print(" Something went wrong. Try again later :D")
 
-			
-		#hash usernames and passwords before writing to .txt file
-		with open("accountfile.txt","a") as file:
-			file.write(make_hash(new_username))
-			file.write(" ")
-			file.write(make_hash(new_password))
-			file.write("\n")
-
-		if is_authorized(new_username, new_password):
-			try:
-				moving_ellipsis("\n Redirecting to login process")
-				authorisation()
-			except Exception as e:
-				print(f" Fail encountered during sub-process {make_user.__name__}. Error: {e}")
-		else:
-			print(" Something went wrong. Try again later :D")
-
-		return False
+	return False
 
 def authorisation():
 	if len(list(get_existing_users())) == 0:
@@ -176,6 +167,38 @@ def authorisation():
 			print("\n Incorrect login details")
 			return False, username
 
+def vault_menu(name):
+	while True:
+		choice2 = get_input(f'\n {name}@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', [["Initialise", "Create your password vault"], ["Load", "Load your password vault connected to your account"], ["Audit", "Edit data in your password vault"], ["Erase", "Delete the entire password vault - requires password"]])
+
+		if choice2 == "Load":
+			pass
+
+		elif choice2 == "Audit":
+			pass
+
+		elif choice2 == "Erase":
+			username = name
+
+			if check_user(username) and does_exist(username+".txt"):
+				print(f" File associated with your username is: {username}.txt")
+				
+				while True:
+					choice3 = get_input(f'\n Do you wish to delete it?\n → ', [["y", "yes"], ["n", "no"]])
+					if choice3 == "Y":
+						spinner(" Deleting password vault: ", "Deleted")
+
+						try:
+							os.remove(username+".txt")
+							break
+
+						except Exception:
+							print(" The file is unable to be deleted")
+							break
+
+			else:
+				print(f"\n A vault tied to your username, {username}, does not exist.")
+
 
 #Main menu loop!!!
 def main():
@@ -184,50 +207,19 @@ def main():
 
 	while True:
 		choice = get_input(f'\n mainMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', 
-			[["Docu", "Returns the documentation for this program"], ["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Exit", "Exit the program - will give 3s warning"]])
+			[["Login", "Login to a pre-existing account"], ['New User', 'Create a new user - found in "accountfile.txt" '], ["Exit", "Exit the program - will give 3s warning"]])
 
 		if choice == "Login":
 			authorise = authorisation()
 			if authorise[0]:
-				while True:
-					choice2 = get_input(f'\n subMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', [["Load", "Load your password vault connected to your account"], ["Audit", "Edit data in your password vault"], ["Erase", "Delete the entire password vault - requires password"]])
-
-					if choice2 == "Load":
-						pass
-
-					elif choice2 == "Audit":
-						pass
-
-					elif choice2 == "Erase":
-						username = authorise[1]
-
-						if check_user(username) and does_exist(username+".txt"):
-							print(f" File associated with your username is: {username}.txt")
-							
-							while True:
-								choice3 = get_input(f'\n Do you wish to delete it?\n → ', [["y", "yes"], ["n", "no"]])
-								if choice3 == "Y":
-									spinner(" Deleting password vault: ", "Deleted")
-
-									try:
-										os.remove(username+".txt")
-										break
-
-									except Exception:
-										print(" The file is unable to be deleted")
-										break
-
-						else:
-							print(f"\n A vault tied to your username, {username}, does not exist.")
-							break
-
+				vault_menu(authorise[1])
+				
 			else:
 				reminder_exit()
 				break
 
-		if choice == "New User":
+		elif choice == "New User":
 			make_user()
-			break
 
 		elif choice == "Exit":
 			reminder_exit()

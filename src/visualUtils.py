@@ -55,17 +55,12 @@ def menu_art(selection):
     if selection == 1:
         print(r"""
                                    _      _                    ______                              
-                         _      __(_)____(_)____   _________  / __/ /__      ______ _________      
+                         _      __(_)____(_)____   _________  / __/ /__      ______  ________      
                         | | /| / / / ___/ / ___/  / ___/ __ \/ /_/ __/ | /| / / __ `/ ___/ _ \     
                         | |/ |/ / / /  / (__  )  (__  ) /_/ / __/ /_ | |/ |/ / /_/ / /  /  __/     
                         |__/|__/_/_/  /_/____/  /____/\____/_/  \__/ |__/|__/\__,_/_/   \___/ 
-
-                              An encrypted password vault software using SQL and sha256
         """)
         print()
 
 def screen_line():
     print(f' __________________________________________<Type "Help" to get started!>______________________________________________')                                                  
-
-def is_command(command_given):
-    return command_given.startswith('/', 0, 1)

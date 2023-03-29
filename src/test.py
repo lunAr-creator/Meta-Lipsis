@@ -23,25 +23,22 @@ class Main:
 	        f.close()
 	        self.get_existing_users()
 
-	def run_func(self, func):
-		return func
-
-	def get_help(self, given_list):
+	def get_help(self, list_):
 		print("\n Help:")
 		lens = []
 		
-		for i in range(len(given_list)):
-			for j in range(len(given_list[i])):
-				lens.append(len(given_list[i][0]))
+		for i in range(len(list_)):
+			for j in range(len(list_[i])):
+				lens.append(len(list_[i][0]))
 
-		for i in range(len(given_list)):
+		for i in range(len(list_)):
 			output2 = []
 
-			for j in range(len(given_list[i])):
-				output = f"{given_list[i][j]}"
+			for j in range(len(list_[i])):
+				output = f"{list_[i][j]}"
 				output2.append(output)
 
-			calc = ((max(lens)+min(lens))-len(given_list[i][0]))
+			calc = ((max(lens)+min(lens))-len(list_[i][0]))
 			dots = '.'*calc
 			info = f'{dots}: '.join(output2)
 
@@ -71,18 +68,74 @@ class Main:
 	        print(f" -Please select from: {', '.join(options)} or Help-")
 
 
+#create the main menu system
 main = Main()
-
 main.visual_initialise([menu_art(1), screen_line(), print(" Type 'Help' to get started")])
 
 options = [
-			["Docu", "Returns the documentation for this program"],
-			["Login", "Login to a pre-existing account"],
+			["Login", "Login to a pre-existing account"], 
 			['New User', 'Create a new user - found in "accountfile.txt" '], 
-			["Ip", "Returns host computers private ip"], 
-			["Cls", "Clear the main menu"], 
 			["Exit", "Exit the program - will give 3s warning"]
 		  ]
 
-main.get_input(f'\n mainMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', options)
+#get choice on what to do next - this result will be in the options list above
+choice = main.get_input(f'\n mainMenu@{socket.gethostname()[8:len(socket.gethostname())]}\n → ', options)
+
+
+
+
+
+
+
+# myFile = openRead('ilovesoma.py')
+# contents = myFile.readLine()
+# myFile.close()
+
+
+
+
+name = ['E', 'l', 'i', 's', 'e']
+print(name[0])#E
+print(name[len(name)-1])#e
+
+name = [['Soma'],['Elise']]
+#Soma
+#Elise
+
+name[0][0]
+name[1][0]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
